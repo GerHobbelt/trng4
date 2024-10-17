@@ -37,7 +37,7 @@
 #include <trng/lcg64.hpp>
 #include <trng/discrete_dist.hpp>
 
-int main() {
+int main(void) {
   std::vector<double> p;  // stores relative probabilities
   // populate vector with relative probabilities
   p.push_back(1);

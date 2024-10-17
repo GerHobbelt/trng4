@@ -39,7 +39,7 @@
 
 typedef enum { head=0, tail=1 } coin;
 
-int main() {
+int main(void) {
   // discrete distribution object
   trng::bernoulli_dist<coin> biased_coin(0.51, head, tail);
   // random number generator

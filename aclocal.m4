@@ -1060,7 +1060,7 @@ _LT_EOF
       echo "$RANLIB libconftest.a" >&AS_MESSAGE_LOG_FD
       $RANLIB libconftest.a 2>&AS_MESSAGE_LOG_FD
       cat > conftest.c << _LT_EOF
-int main() { return 0;}
+int main(void) { return 0;}
 _LT_EOF
       echo "$LTCC $LTCFLAGS $LDFLAGS -o conftest conftest.c -Wl,-force_load,./libconftest.a" >&AS_MESSAGE_LOG_FD
       $LTCC $LTCFLAGS $LDFLAGS -o conftest conftest.c -Wl,-force_load,./libconftest.a 2>conftest.err
@@ -4071,7 +4071,7 @@ void nm_test_func(void){}
 #ifdef __cplusplus
 }
 #endif
-int main(){nm_test_var='a';nm_test_func();return(0);}
+int main(void){nm_test_var='a';nm_test_func();return(0);}
 _LT_EOF
 
   if AC_TRY_EVAL(ac_compile); then
@@ -6242,7 +6242,7 @@ _LT_TAGVAR(objext, $1)=$objext
 lt_simple_compile_test_code="int some_variable = 0;"
 
 # Code to be used in simple link tests
-lt_simple_link_test_code='int main(){return(0);}'
+lt_simple_link_test_code='int main(void){return(0);}'
 
 _LT_TAG_COMPILER
 # Save the default compiler, since it gets overwritten when the other

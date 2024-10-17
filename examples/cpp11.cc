@@ -8,7 +8,7 @@
 #include <trng/lcg64.hpp>
 #include <trng/normal_dist.hpp>
 
-int main() {
+int main(void) {
   std::mt19937 R_cpp11;
   trng::lcg64 R_trng;
   std::normal_distribution<> N_cpp11;
@@ -23,7 +23,7 @@ int main() {
 }
 #else
 #include <iostream>
-int main() {
+int main(void) {
   std::cout << "Not a C++11 compiler.\n";
 }
 #endif

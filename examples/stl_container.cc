@@ -71,7 +71,7 @@ void print_range(iter i1, iter i2) {
   std::cout << "\n\n";
 }
 
-int main() {
+int main(void) {
   trng::yarn2 R;
   trng::uniform_int_dist U(0, 100);
   std::vector<long> v(10);

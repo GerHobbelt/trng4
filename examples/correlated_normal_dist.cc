@@ -48,7 +48,7 @@ double covariance(const std::vector<double> &v1, const std::vector<double> &v2) 
   return c;
 }
 
-int main() {
+int main(void) {
   const int d=4;
   // covariance matrix
   double sig[d][d] = { { 2.0, -0.5,  0.3, -0.3},

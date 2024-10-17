@@ -36,7 +36,7 @@
 #include <trng/lcg64.hpp>
 #include <trng/discrete_dist.hpp>
 
-int main() {
+int main(void) {
   const int n=6;
   // stores relative probabilities
   double p[6]={ 1, 3.25, 5, 6.5, 7, 2 };

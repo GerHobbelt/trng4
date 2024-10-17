@@ -6678,7 +6678,7 @@ void nm_test_func(void){}
 #ifdef __cplusplus
 }
 #endif
-int main(){nm_test_var='a';nm_test_func();return(0);}
+int main(void){nm_test_var='a';nm_test_func();return(0);}
 _LT_EOF
 
   if { { eval echo "\"\$as_me\":${as_lineno-$LINENO}: \"$ac_compile\""; } >&5
@@ -7917,7 +7917,7 @@ _LT_EOF
       echo "$RANLIB libconftest.a" >&5
       $RANLIB libconftest.a 2>&5
       cat > conftest.c << _LT_EOF
-int main() { return 0;}
+int main(void) { return 0;}
 _LT_EOF
       echo "$LTCC $LTCFLAGS $LDFLAGS -o conftest conftest.c -Wl,-force_load,./libconftest.a" >&5
       $LTCC $LTCFLAGS $LDFLAGS -o conftest conftest.c -Wl,-force_load,./libconftest.a 2>conftest.err
@@ -8768,7 +8768,7 @@ objext=$objext
 lt_simple_compile_test_code="int some_variable = 0;"
 
 # Code to be used in simple link tests
-lt_simple_link_test_code='int main(){return(0);}'
+lt_simple_link_test_code='int main(void){return(0);}'
 
 
 

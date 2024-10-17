@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
 #include <cstdlib>
 #include <iostream>
 
-int main() {
+int main(void) {
   std::cerr << "Sorry, no MPI library installed on your computer.\n";
   return EXIT_FAILURE;
 }

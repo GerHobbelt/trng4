@@ -220,7 +220,7 @@ void time_boost(R &r, std::string name) {
    std::cout << std::endl;
 }
 
-int main() {
+int main(void) {
   std::cout << "                                            10^6 random numbers per second\n"
             << "generator                       [min,max] [0,1]     [0,1)     (0,1]     (0,1)     canonical\n"
 	    << "=============================================================================================\n";

@@ -67,7 +67,7 @@ void sample_output(R &r, std::string name) {
 }
 
 
-int main() {
+int main(void) {
   try {
     { trng::lcg64       r;  sample_output(r, "trng::lcg64"); }
     { trng::lcg64_shift r;  sample_output(r, "trng::lcg64_shift"); }

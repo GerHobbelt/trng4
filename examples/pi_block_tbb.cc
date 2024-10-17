@@ -68,7 +68,7 @@ public:
   }
 };
 
-int main() {
+int main(void) {
   tbb::task_scheduler_init init;        // initiallize TBB task scheduler
   const long samples=1000000l;          // total number of points in square
   trng::yarn2 r;                        // random number engine
@@ -85,7 +85,7 @@ int main() {
 #include <cstdlib>
 #include <iostream>
 
-int main() {
+int main(void) {
   std::cerr << "Sorry, Intel Threading Buildings Blocks are not installed on your system.\n";
   return EXIT_FAILURE;
 }

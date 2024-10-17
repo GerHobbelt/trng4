@@ -39,7 +39,7 @@
 #include <trng/yarn2.hpp>
 #include <trng/uniform01_dist.hpp>
 
-int main() {
+int main(void) {
   const long samples=1000000l;          // total number of points in square
   long in=0l;                           // no points in circle
   // distribute workload over all processes and make a global reduction 
@@ -71,7 +71,7 @@ int main() {
 #include <cstdlib>
 #include <iostream>
 
-int main() {
+int main(void) {
   std::cerr << "Sorry, OpenMP is not supported by your compiler.\n";
   return EXIT_FAILURE;
 }

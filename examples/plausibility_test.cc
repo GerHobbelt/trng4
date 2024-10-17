@@ -383,7 +383,7 @@ void plausibility_main() {
 }
 
 
-int main() {
+int main(void) {
   try {
     { plausibility_main<trng::lcg64>(); }
     { plausibility_main<trng::lcg64_shift>(); }

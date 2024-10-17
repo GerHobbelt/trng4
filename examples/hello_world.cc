@@ -36,7 +36,7 @@
 #include <trng/yarn2.hpp>
 #include <trng/normal_dist.hpp>
 
-int main() {
+int main(void) {
   // random number engine
   trng::yarn2 R;
   // normal distribution with mean 6 and standard deviation 2

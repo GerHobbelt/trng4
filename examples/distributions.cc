@@ -205,7 +205,7 @@ void discrete_test(dist &d, const char *name) {
 }
 
 
-int main() {
+int main(void) {
   {
     trng::uniform_dist<> d(2.0, 5.0);
     continous_test(d, "uniform distribution");

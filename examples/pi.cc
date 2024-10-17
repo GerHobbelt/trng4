@@ -35,7 +35,7 @@
 #include <trng/yarn2.hpp>
 #include <trng/uniform01_dist.hpp>
 
-int main() {
+int main(void) {
   const long samples=1000000l;          // total number of points in square
   long in=0l;                           // no points in circle
   trng::yarn2 r;                        // random number engine
