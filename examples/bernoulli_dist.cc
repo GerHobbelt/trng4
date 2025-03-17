@@ -1,4 +1,4 @@
-// Copyright (c) 2000-2019, Heiko Bauke
+// Copyright (c) 2000-2020, Heiko Bauke
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -46,10 +46,10 @@ int main(void) {
   trng::lcg64 r;
   // draw some random numbers
   std::vector<int> count(2, 0);
-  const int samples = 100000;
+  const int samples{100000};
   for (int i = 0; i < samples; ++i) {
-    int x = biased_coin(r);  // draw a random number
-    ++count[x];              // count
+    const int x{biased_coin(r)};  // draw a random number
+    ++count[x];                   // count
   }
   // print results
   std::cout << "value\t\tprobability\tcount\t\tempirical probability\n"

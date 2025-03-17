@@ -1,4 +1,4 @@
-// Copyright (c) 2000-2019, Heiko Bauke
+// Copyright (c) 2000-2020, Heiko Bauke
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -233,7 +233,7 @@ BOOST_AUTO_TEST_SUITE(test_suite_discard)
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_discard, R, engines) {
   // two engines with equal state
   R r1, r2;
-  const unsigned long long throw_away_1{2ull * 3 * 5 * 7 * 11 * 13 * 17 * 19 + 0x1000000};
+  const unsigned long long throw_away_1{2ull * 3 * 5 * 7 * 11 * 13 * 17 * 19 + 0x10000000ull};
   const unsigned long long throw_away_2{2ull * 3 * 5 * 7 * 11 * 13 * 17 * 19};
   r1.discard(throw_away_1);
   for (unsigned long long i{0}; i < throw_away_1; ++i)

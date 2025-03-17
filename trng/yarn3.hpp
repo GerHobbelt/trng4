@@ -1,4 +1,4 @@
-// Copyright (c) 2000-2019, Heiko Bauke
+// Copyright (c) 2000-2020, Heiko Bauke
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -156,7 +156,7 @@ namespace trng {
   // Inline and template methods
 
   TRNG_CUDA_ENABLE
-  void yarn3::step() {
+  inline void yarn3::step() {
     const uint64_t t{static_cast<uint64_t>(P.a[0]) * static_cast<uint64_t>(S.r[0]) +
                      static_cast<uint64_t>(P.a[1]) * static_cast<uint64_t>(S.r[1]) +
                      static_cast<uint64_t>(P.a[2]) * static_cast<uint64_t>(S.r[2])};
@@ -166,7 +166,7 @@ namespace trng {
   }
 
   TRNG_CUDA_ENABLE
-  yarn3::result_type yarn3::operator()() {
+  inline yarn3::result_type yarn3::operator()() {
     step();
 #if defined __CUDA_ARCH__
     if (S.r[0] == 0)
@@ -186,7 +186,7 @@ namespace trng {
   }
 
   TRNG_CUDA_ENABLE
-  long yarn3::operator()(long x) {
+  inline long yarn3::operator()(long x) {
     return static_cast<long>(utility::uniformco<double, yarn3>(*this) * x);
   }
 
@@ -237,8 +237,7 @@ namespace trng {
 
   TRNG_CUDA_ENABLE
   inline void yarn3::jump2(unsigned int s) {
-    int32_t b[9], c[9], d[3], r[3];
-    const parameter_type P_backup{P};
+    result_type b[9], c[9]{};
     b[0] = P.a[0];
     b[1] = P.a[1];
     b[2] = P.a[2];
@@ -255,9 +254,8 @@ namespace trng {
         break;
       int_math::matrix_mult<3>(c, c, b, modulus);
     }
-    r[0] = S.r[0];
-    r[1] = S.r[1];
-    r[2] = S.r[2];
+    const result_type r[3]{S.r[0], S.r[1], S.r[2]};
+    result_type d[3];
     if ((s & 1u) == 0)
       int_math::matrix_vec_mult<3>(b, r, d, modulus);
     else
@@ -265,7 +263,6 @@ namespace trng {
     S.r[0] = d[0];
     S.r[1] = d[1];
     S.r[2] = d[2];
-    P = P_backup;
   }
 
   TRNG_CUDA_ENABLE

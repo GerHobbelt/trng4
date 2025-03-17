@@ -1,4 +1,4 @@
-// Copyright (c) 2000-2019, Heiko Bauke
+// Copyright (c) 2000-2020, Heiko Bauke
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -47,8 +47,8 @@
 #include <trng/yarn4.hpp>
 #include <trng/yarn5.hpp>
 #include <trng/yarn5s.hpp>
-// #include <trng/mt19937.hpp>
-// #include <trng/mt19937_64.hpp>
+#include <trng/mt19937.hpp>
+#include <trng/mt19937_64.hpp>
 #include <trng/lagfib2xor.hpp>
 #include <trng/lagfib2plus.hpp>
 #include <trng/lagfib4xor.hpp>
@@ -60,7 +60,7 @@ void sample_output(R &r, std::string name) {
   while (name.length() < 32)
     name += ' ';
   std::cout << name;
-  for (int i = 0; i < 15; ++i)
+  for (int i{0}; i < 15; ++i)
     std::cout << r() << '\t';
   std::cout << r() << '\n';
 }
@@ -124,8 +124,14 @@ int main(void) {
       trng::yarn5s r;
       sample_output(r, "trng::yarn5s");
     }
-    // { trng::mt19937     r;  sample_output(r, "trng::mt19937"); }
-    // { trng::mt19937_64  r;  sample_output(r, "trng::mt19937_64"); }
+    {
+      trng::mt19937 r;
+      sample_output(r, "trng::mt19937");
+    }
+    {
+      trng::mt19937_64 r;
+      sample_output(r, "trng::mt19937_64");
+    }
     {
       trng::lagfib2xor_19937_64 r;
       sample_output(r, "trng::lagfib2xor_19937_64");
