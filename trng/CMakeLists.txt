@@ -9,6 +9,7 @@ set(HEADER_FILES
     chi_square_dist.hpp
     constants.hpp
     correlated_normal_dist.hpp
+    count128_lcg_shift.hpp
     cuda.hpp
     discrete_dist.hpp
     exponential_dist.hpp
@@ -56,6 +57,7 @@ set(HEADER_FILES
     tent_dist.hpp
     truncated_normal_dist.hpp
     twosided_exponential_dist.hpp
+    uint128.hpp
     uniform01_dist.hpp
     uniform_dist.hpp
     uniform_int_dist.hpp
@@ -73,6 +75,7 @@ set(HEADER_FILES
 )
 
 set(SOURCE_FILES
+    count128_lcg_shift.cc
     lcg64.cc
     lcg64_shift.cc
     lcg64_count_shift.cc
