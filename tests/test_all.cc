@@ -30,47 +30,6 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#if !(defined TRNG_GENERATE_CANONICAL_HPP)
-
-#define TRNG_GENERATE_CANONICAL_HPP
-
-#include <type_traits>
-#include <trng/cuda.hpp>
-#include <trng/limits.hpp>
-#include <trng/math.hpp>
-#include <trng/utility.hpp>
-
-namespace trng {
-
-  template<typename result_type, typename R>
-  TRNG_CUDA_ENABLE result_type generate_canonical(R &);
-
-  namespace detail {
-
-    template<typename result_type, typename R>
-    TRNG_CUDA_ENABLE inline
-        typename std::enable_if<math::numeric_limits<result_type>::is_iec559, result_type>::type
-        generate_canonical_impl(R &r, result_type) {
-      return utility::uniformoo<result_type>(r);
-    }
-
-    template<typename result_type, typename R>
-    TRNG_CUDA_ENABLE inline
-        typename std::enable_if<math::numeric_limits<result_type>::is_integer,
-                                result_type>::type
-        generate_canonical_impl(R &r, result_type) {
-      return static_cast<result_type>(
-          math::floor(utility::uniformco<double>(r) *
-                      (static_cast<double>(R::max) - static_cast<double>(R::min) + 1.0)));
-    }
-
-  }  // namespace detail
-
-  template<typename result_type, typename R>
-  TRNG_CUDA_ENABLE result_type generate_canonical(R &g) {
-    return detail::generate_canonical_impl(g, result_type());
-  }
-
-}  // namespace trng
-
-#endif
+#define BOOST_TEST_MODULE test all
+#define BOOST_TEST_DYN_LINK
+#include <boost/test/unit_test.hpp>
