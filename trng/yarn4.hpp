@@ -63,7 +63,9 @@ namespace trng {
     static TRNG4_EXPORT const int_math::power<yarn4::modulus, yarn4::gen> g;
 
   public:
+    TRNG_CUDA_ENABLE
     static constexpr result_type min() { return min_; }
+    TRNG_CUDA_ENABLE
     static constexpr result_type max() { return max_; }
 
     // Parameter and status classes
@@ -141,6 +143,7 @@ namespace trng {
 
     // Other useful methods
     static const char *name();
+    TRNG_CUDA_ENABLE
     long operator()(long);
 
   private:
