@@ -69,20 +69,33 @@ namespace trng {
 
     // --- Beta function -----------------------------------------------
 
-    TRNG_CUDA_ENABLE
-    inline float Beta(float x, float y) {
-      return exp(ln_Gamma(x) + ln_Gamma(y) - ln_Gamma(x + y));
-    }
+    namespace detail {
+
+      template<typename T>
+      T Beta(T x, T y) {
+        static const T ln_max{ln(std::numeric_limits<T>::max())};
+        if (x <= 0 or y <= 0) {
+#if !(defined __CUDA_ARCH__)
+          errno = EDOM;
+#endif
+          return std::numeric_limits<T>::signaling_NaN();
+        }
+        const T z{x + y};
+        if (z * ln(z) - z > ln_max)
+          // less accurate but avoids overflow
+          return exp(ln_Gamma(x) + ln_Gamma(y) - ln_Gamma(z));
+        return Gamma(x) / Gamma(z) * Gamma(y);
+      }
+    }  // namespace detail
 
     TRNG_CUDA_ENABLE
-    inline double Beta(double x, double y) {
-      return exp(ln_Gamma(x) + ln_Gamma(y) - ln_Gamma(x + y));
-    }
+    inline float Beta(float x, float y) { return detail::Beta(x, y); }
+
+    TRNG_CUDA_ENABLE
+    inline double Beta(double x, double y) { return detail::Beta(x, y); }
 
 #if !(defined __CUDA_ARCH__)
-    inline long double Beta(long double x, long double y) {
-      return exp(ln_Gamma(x) + ln_Gamma(y) - ln_Gamma(x + y));
-    }
+    inline long double Beta(long double x, long double y) { return detail::Beta(x, y); }
 #endif
 
     // --- ln of binomial coefficient ----------------------------------
@@ -130,7 +143,7 @@ namespace trng {
       // by series expansion, see "Numerical Recipes" by W. H. Press et al., 3rd edition
       template<typename T, bool by_Gamma_a>
       TRNG_CUDA_ENABLE T GammaP_ser(T a, T x) {
-        const int itmax{32};
+        const int itmax{64};
         const T eps{4 * numeric_limits<T>::epsilon()};
         if (x < eps)
           return T{0};
@@ -163,7 +176,7 @@ namespace trng {
       // by continued fraction, see "Numerical Recipes" by W. H. Press et al., 3rd edition
       template<typename T, bool by_Gamma_a>
       TRNG_CUDA_ENABLE T GammaQ_cf(T a, T x) {
-        const T itmax{32};
+        const T itmax{64};
         const T eps{4 * numeric_limits<T>::epsilon()};
         const T min{4 * numeric_limits<T>::min()};
         // set up for evaluating continued fraction by modified Lentz's method
@@ -310,7 +323,7 @@ namespace trng {
           x = p < t ? pow(p / t, 1 / a) : 1 - ln1p(-(p - t) / (1 - t));
         }
         // refinement by Halley's method
-        for (int i{0}; i < 16; ++i) {
+        for (int i{0}; i < 32; ++i) {
           if (x <= 0) {
             x = 0;
             break;
@@ -528,14 +541,16 @@ namespace trng {
       return 0.5 + 0.5 * erf(x);
     }
 
+#if !(defined __CUDA_ARCH__)
     inline long double Phi(long double x) {
       x *= constants<long double>::one_over_sqrt_2;
       if (x < -0.6744897501960817l * constants<long double>::one_over_sqrt_2)
-        return 0.5 * erfc(-x);
+        return 0.5l * erfc(-x);
       if (x > +0.6744897501960817l * constants<long double>::one_over_sqrt_2)
         return 1.0l - 0.5l * erfc(x);
       return 0.5l + 0.5l * erf(x);
     }
+#endif
 
     // --- inverse of normal distribution function  --------------------
 
@@ -595,54 +610,69 @@ namespace trng {
           return -numeric_limits<T>::infinity();
         if (x == 1)
           return numeric_limits<T>::infinity();
-        T t, q;
         if (x < traits::x_low) {
-          // Rational approximation for lower region
-          q = sqrt(-2 * ln(x));
-          t = (((((traits::c[0] * q + traits::c[1]) * q + traits::c[2]) * q + traits::c[3]) *
-                    q +
-                traits::c[4]) *
-                   q +
-               traits::c[5]) /
-              ((((traits::d[0] * q + traits::d[1]) * q + traits::d[2]) * q + traits::d[3]) * q +
-               1);
+          // rational approximation for lower region
+          const T q{sqrt(-2 * ln(x))};
+          return (((((traits::c[0] * q + traits::c[1]) * q + traits::c[2]) * q + traits::c[3]) *
+                       q +
+                   traits::c[4]) *
+                      q +
+                  traits::c[5]) /
+                 ((((traits::d[0] * q + traits::d[1]) * q + traits::d[2]) * q + traits::d[3]) *
+                      q +
+                  1);
         } else if (x < traits::x_high) {
-          // Rational approximation for central region
-          q = x - traits::one_half;
-          T r = q * q;
-          t = (((((traits::a[0] * r + traits::a[1]) * r + traits::a[2]) * r + traits::a[3]) *
-                    r +
-                traits::a[4]) *
-                   r +
-               traits::a[5]) *
-              q /
-              (((((traits::b[0] * r + traits::b[1]) * r + traits::b[2]) * r + traits::b[3]) *
-                    r +
-                traits::b[4]) *
-                   r +
-               1);
+          // rational approximation for central region
+          const T q{x - traits::one_half};
+          const T r{q * q};
+          return (((((traits::a[0] * r + traits::a[1]) * r + traits::a[2]) * r + traits::a[3]) *
+                       r +
+                   traits::a[4]) *
+                      r +
+                  traits::a[5]) *
+                 q /
+                 (((((traits::b[0] * r + traits::b[1]) * r + traits::b[2]) * r + traits::b[3]) *
+                       r +
+                   traits::b[4]) *
+                      r +
+                  1);
         } else {
-          // Rational approximation for upper region
-          q = sqrt(-2 * ln1p(-x));
-          t = -(((((traits::c[0] * q + traits::c[1]) * q + traits::c[2]) * q + traits::c[3]) *
-                     q +
-                 traits::c[4]) *
-                    q +
-                traits::c[5]) /
-              ((((traits::d[0] * q + traits::d[1]) * q + traits::d[2]) * q + traits::d[3]) * q +
-               1);
+          // rational approximation for upper region
+          const T q{sqrt(-2 * ln1p(-x))};
+          return -(((((traits::c[0] * q + traits::c[1]) * q + traits::c[2]) * q +
+                     traits::c[3]) *
+                        q +
+                    traits::c[4]) *
+                       q +
+                   traits::c[5]) /
+                 ((((traits::d[0] * q + traits::d[1]) * q + traits::d[2]) * q + traits::d[3]) *
+                      q +
+                  1);
         }
-        return t;
       }
 
       template<typename T>
       TRNG_CUDA_ENABLE T inv_Phi(T x) {
         using traits = inv_Phi_traits<T>;
         T y{inv_Phi_approx(x)};
-        if (isfinite(y)) {  // refinement by Halley rational method
+        // refinement by Halley rational method
+        if (isfinite(y)) {
           const T e{(Phi(y) - x)};
           const T u{e * constants<T>::sqrt_2pi * exp(y * y * traits::one_half)};
           y -= u / (1 + y * u * traits::one_half);
+        }
+        // T is a floating point number type with more than 80 bits, a 2nd iteration is
+        // required to reach full machine precision
+#if __cplusplus >= 201703L
+        if constexpr (sizeof(T) > 10) {
+#else
+        if (sizeof(T) > 10) {
+#endif
+          if (isfinite(y)) {
+            const T e{(Phi(y) - x)};
+            const T u{e * constants<T>::sqrt_2pi * exp(y * y * traits::one_half)};
+            y -= u / (1 + y * u * traits::one_half);
+          }
         }
         return y;
       }
@@ -650,26 +680,54 @@ namespace trng {
       template<typename T>
       TRNG_CUDA_ENABLE T inv_erf(T x) {
         T y{inv_Phi_approx((x + 1) / 2) * constants<T>::one_over_sqrt_2};
-        if (isfinite(y)) {  // refinement by Halley rational method
+        // refinement by Halley rational method
+        if (isfinite(y)) {
           const T e{erf(y) - x};
           const T u{e * (constants<T>::sqrt_pi_over_2) * exp(y * y)};
           y -= u / (1 + y * u);
+        }
+        // T is a floating point number type with more than 80 bits, a 2nd iteration is
+        // required to reach full machine precision
+#if __cplusplus >= 201703L
+        if constexpr (sizeof(T) > 10) {
+#else
+        if (sizeof(T) > 10) {
+#endif
+          if (isfinite(y)) {
+            const T e{erf(y) - x};
+            const T u{e * (constants<T>::sqrt_pi_over_2) * exp(y * y)};
+            y -= u / (1 + y * u);
+          }
         }
         return y;
       }
 
       template<typename T>
       TRNG_CUDA_ENABLE T inv_erfc(T x) {
-        // step size in the Halley step is proportiaonal to erfc, use symmetry to increase
+        // step size in the Halley step is proportional to erfc, use symmetry to increase
         // numerical accuracy
         const bool flag{x > 1};
         if (flag)
           x = -(x - 1) + 1;
         T y{-inv_Phi_approx(x / 2) * constants<T>::one_over_sqrt_2};
-        if (isfinite(y)) {  // refinement by Halley rational method
+        // refinement by Halley rational method
+        if (isfinite(y)) {
           const T e{erfc(y) - x};
           const T u{-e * (constants<T>::sqrt_pi_over_2) * exp(y * y)};
           y -= u / (1 + y * u);
+        }
+        // T is a floating point number type with more than 80 bits, a 2nd iteration is
+        // required to reach full machine precision
+#if __cplusplus >= 201703L
+        if constexpr (sizeof(T) > 10) {
+#else
+        if (sizeof(T) > 10) {
+#endif
+          if (isfinite(y)) {
+            const T e{erfc(y) - x};
+            const T u{-e * (constants<T>::sqrt_pi_over_2) * exp(y * y)};
+            y -= u / (1 + y * u);
+          }
         }
         return flag ? -y : y;
       }

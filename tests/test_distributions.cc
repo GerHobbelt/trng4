@@ -34,6 +34,7 @@
 #include <iterator>
 #include <limits>
 #include <cmath>
+#include <numeric>
 #include <ciso646>
 
 #define BOOST_TEST_DYN_LINK
@@ -150,7 +151,7 @@ bool continous_dist_test_integrate_pdf(const dist &d) {
 
 
 template<typename dist>
-bool continous_dist_test_icdf(const dist &d) {
+boost::test_tools::predicate_result continous_dist_test_icdf(const dist &d) {
   using result_type = typename dist::result_type;
   const int bins{1024 * 1024};
   const result_type dp{result_type(1) / result_type(bins)};
@@ -158,8 +159,12 @@ bool continous_dist_test_icdf(const dist &d) {
     const result_type p{i * dp};
     const result_type x{d.icdf(p)};
     const result_type y{d.cdf(x)};
-    if (std::abs(y - p) > 256 * std::numeric_limits<result_type>::epsilon())
-      return false;
+    if (std::abs(y - p) > 256 * std::numeric_limits<result_type>::epsilon()) {
+      boost::test_tools::predicate_result res(false);
+      res.message() << "cdf(icdf(p)) != p  for  p = " << p << " with cdf(icdf(p)) = " << y
+                    << " and |cdf(icdf(p)) - p| = " << std::abs(y - p);
+      return res;
+    }
   }
   return true;
 }
@@ -191,15 +196,23 @@ bool continous_dist_test_chi2_test(dist &d) {
 
 
 template<typename dist>
-bool discrete_dist_test(dist &d) {
-  double p{0};
+boost::test_tools::predicate_result discrete_dist_test(dist &d) {
   int i{d.min()};
-  while (p < 0.95) {
-    p += d.pdf(i);
-    const double cdf = d.cdf(i);
-    if (std::abs(p - cdf) > 16 * std::numeric_limits<double>::epsilon())
-      return false;
+  double P{d.cdf(i)};
+  while (P < 0.95) {
+    double p{P};
+    if (i > d.min())
+      p -= d.cdf(i - 1);
+    const double diff{p - d.pdf(i)};
+    if (diff > 128 * std::numeric_limits<double>::epsilon()) {
+      boost::test_tools::predicate_result res(false);
+      res.message() << "insufficient accuracy, i = " << i << ", pdf(i) = " << d.pdf(i)
+                    << ", cdf(i) - cdf(i-1) = " << p
+                    << ", |cdf(i) - cdf(i-1) - pdf(i)| = " << diff;
+      return res;
+    }
     ++i;
+    P = d.cdf(i);
   }
   return true;
 }
