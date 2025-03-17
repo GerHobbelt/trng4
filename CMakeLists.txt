@@ -13,18 +13,37 @@ if (NOT CMAKE_BUILD_TYPE)
 endif ()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES GNU)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -pedantic")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic")
     # set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_GLIBCXX_DEBUG")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES Clang)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic -Wno-c++98-compat")
+    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_LIBCPP_DEBUG=1")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES Intel)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+elseif (CMAKE_CXX_COMPILER_ID MATCHES MSVC)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /permissive- /W4 /WX")
 endif ()
 
-if (CMAKE_CXX_COMPILER_ID MATCHES Clang)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Wpedantic")
-    set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -D_LIBCPP_DEBUG=1")
+if (WIN32)
+    set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE)
 endif ()
+
+# Configure package config files.
+set(pkg_config_install_dir "${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME}")
+set(project_pkg_config "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Config.cmake")
+set(version_pkg_config "${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}ConfigVersion.cmake")
+set(targets_export_name "${PROJECT_NAME}Targets")
+include(CMakePackageConfigHelpers)
+write_basic_package_version_file("${version_pkg_config}" COMPATIBILITY SameMajorVersion)
+configure_package_config_file("cmake/Config.cmake.in" "${project_pkg_config}" INSTALL_DESTINATION "${pkg_config_install_dir}")
 
 add_subdirectory(trng)
 add_subdirectory(examples)
 add_subdirectory(tests)
+
+# Install package config files.
+install(FILES "${project_pkg_config}" "${version_pkg_config}" DESTINATION "${pkg_config_install_dir}")
+install(EXPORT "${targets_export_name}" DESTINATION "${pkg_config_install_dir}")
 
 find_program(RPMBUILD_FOUND rpmbuild)
 
