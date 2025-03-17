@@ -1,4 +1,4 @@
-// Copyright (c) 2000-2020, Heiko Bauke
+// Copyright (c) 2000-2021, Heiko Bauke
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -90,16 +90,17 @@ namespace trng {
     // random numbers
     template<typename R>
     int operator()(R &r) {
-      double p(utility::uniformco<double>(r));
-      std::size_t x(utility::discrete(p, P.P_.begin(), P.P_.end()));
+      double p{utility::uniformco<double>(r)};
+      const std::size_t x{utility::discrete(p, P.P_.begin(), P.P_.end())};
+      int x_i{static_cast<int>(x)};
       if (x + 1 == P.P_.size()) {
-        p -= cdf(x);
+        p -= cdf(x_i);
         while (p > 0) {
-          ++x;
-          p -= pdf(x);
+          ++x_i;
+          p -= pdf(x_i);
         }
       }
-      return static_cast<int>(x);
+      return x_i;
     }
     template<typename R>
     int operator()(R &r, const param_type &p) {

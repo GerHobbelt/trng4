@@ -1,4 +1,4 @@
-// Copyright (c) 2000-2020, Heiko Bauke
+// Copyright (c) 2000-2021, Heiko Bauke
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -105,7 +105,8 @@ namespace trng {
     // random numbers
     template<typename R>
     int operator()(R &r) {
-      return utility::discrete(utility::uniformoo<double>(r), P.P_.begin(), P.P_.end());
+      return static_cast<int>(
+          utility::discrete(utility::uniformoo<double>(r), P.P_.begin(), P.P_.end()));
     }
     template<typename R>
     int operator()(R &r, const param_type &P) {

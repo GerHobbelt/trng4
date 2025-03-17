@@ -1,4 +1,4 @@
-// Copyright (c) 2000-2020, Heiko Bauke
+// Copyright (c) 2000-2021, Heiko Bauke
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -174,7 +174,7 @@ namespace trng {
             sum ^= M(i, k) * V(k);
           W(i) = sum;
         }
-        S.index += n_partial;
+        S.index = static_cast<unsigned int>(S.index + n_partial);
         S.index &= mask;
         for (size_type i{0}; i < matrix_size; ++i)
           S.r[(S.index - i) & mask] = W(matrix_size - 1 - i);
