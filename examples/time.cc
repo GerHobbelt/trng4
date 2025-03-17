@@ -1,4 +1,4 @@
-// Copyright (c) 2000-2022, Heiko Bauke
+// Copyright (c) 2000-2024, Heiko Bauke
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -41,6 +41,7 @@
 #include <trng/lcg64.hpp>
 #include <trng/lcg64_shift.hpp>
 #include <trng/lcg64_count_shift.hpp>
+#include <trng/count128_lcg_shift.hpp>
 #include <trng/mrg2.hpp>
 #include <trng/mrg3.hpp>
 #include <trng/mrg3s.hpp>
@@ -228,6 +229,10 @@ int main(void) {
     {
       trng::lcg64_count_shift r;
       time_main(r, "trng::lcg64_count_shift");
+    }
+    {
+      trng::count128_lcg_shift r;
+      time_main(r, "trng::count128_lcg_shift");
     }
     {
       trng::mrg2 r;
