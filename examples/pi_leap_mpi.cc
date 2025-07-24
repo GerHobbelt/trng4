@@ -36,7 +36,7 @@
 #include <trng/yarn2.hpp>
 #include <trng/uniform01_dist.hpp>
 
-int main(int argc, char *argv[]) {
+int main(int argc, const char **argv) {
   const long samples{1000000l};  // total number of points in square
   MPI_Init(&argc, &argv);        // initialize MPI environment
   int size, rank;
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
     if (x * x + y * y <= 1.0)         // is point in circle?
       ++in;                           // increase counter
   }
-  // calculate sum of all local variables 'in' and storre result in 'in_all' on process 0
+  // calculate sum of all local variables 'in' and store result in 'in_all' on process 0
   long in_all;
   MPI_Reduce(&in, &in_all, 1, MPI_LONG, MPI_SUM, 0, MPI_COMM_WORLD);
   if (rank == 0)  // print result

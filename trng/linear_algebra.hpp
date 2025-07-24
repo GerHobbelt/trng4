@@ -238,7 +238,7 @@ namespace trng {
     explicit GF2(bool v = false) : value(v ? 1 : 0) {}
     explicit GF2(int v) : value(v != 0 ? 1 : 0) {}
 
-    explicit operator bool() const { return value; }
+    explicit operator bool() const { return !!value; } // !! : fix warning C4800: Implicit conversion from 'const uint8_t' to bool. Possible information loss
 
     friend bool operator==(const GF2 a, const GF2 b) { return a.value == b.value; }
     friend bool operator!=(const GF2 a, const GF2 b) { return a.value != b.value; }

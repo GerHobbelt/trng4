@@ -36,17 +36,17 @@
 #include <trng/uniform01_dist.hpp>
 #include "mpi.h"
 
-const int number_of_realizations{1000};
-const int Nx{250}, Ny{200};  // grid size
-const double P{0.46};        // occupation probability
+static constexpr const int number_of_realizations{1000};
+static constexpr const int Nx{250}, Ny{200};  // grid size
+static constexpr const double P{0.46};        // occupation probability
 
-int main(int argc, char *argv[]) {
+int main(int argc, const char **argv) {
   MPI_Init(&argc, &argv);  // initialize MPI environment
   int size;
   MPI_Comm_size(MPI_COMM_WORLD, &size);  // get total number of processes
   // create a two-dimensional Cartesian communicator
   int dims[2]{0, 0};             // number of processes in each domension
-  int coords[2];                 // coordinates of current process within the grid
+  int coords[2]{0, 0};           // coordinates of current process within the grid
   int periods[2]{false, false};  // no periodic boundary conditions
   // calculate a balanced grid partitioning such that  size = dims[0] * dims[1]
   MPI_Dims_create(size, 2, dims);

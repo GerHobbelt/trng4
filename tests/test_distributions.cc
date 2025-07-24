@@ -30,6 +30,9 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 // OF THE POSSIBILITY OF SUCH DAMAGE.
 
+#include <catch2/catch.hpp>
+#include <catch2/catch_template_test_macros.hpp>
+
 #include <vector>
 #include <iterator>
 #include <limits>
@@ -38,8 +41,6 @@
 #include <ciso646>
 #include <sstream>
 #include <algorithm>
-
-#include <catch2/catch.hpp>
 
 #include <trng/uniform_dist.hpp>
 #include <trng/uniform01_dist.hpp>

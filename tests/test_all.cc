@@ -32,5 +32,9 @@
 
 #define CATCH_CONFIG_MAIN
 #include <catch2/catch.hpp>
+#if __has_include(<catch2/catch_reporter_sonarqube.hpp>)
 #include <catch2/catch_reporter_sonarqube.hpp>
+#endif
+#if __has_include(<catch2/catch_reporter_teamcity.hpp>)
 #include <catch2/catch_reporter_teamcity.hpp>
+#endif

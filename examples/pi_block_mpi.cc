@@ -36,7 +36,7 @@
 #include <trng/yarn2.hpp>
 #include <trng/uniform01_dist.hpp>
 
-int main(int argc, char *argv[]) {
+int main(int argc, const char **argv) {
   const long samples{1000000l};  // total number of points in square
   MPI_Init(&argc, &argv);        // initialise MPI environment
   int size, rank;
